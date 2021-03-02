@@ -101,3 +101,6 @@ project/plugins/project/
 
 # End of https://www.gitignore.io/api/sbt,scala,intellij
 
+.bloop/
+
+.metals/
