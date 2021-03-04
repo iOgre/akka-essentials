@@ -10,6 +10,6 @@ val scalaTestVersion = "3.2.5"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor"   % akkaVersion,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
-  "org.scalatest"     %% "scalatest"    % scalaTestVersion,
-  "io.monix"          %% "monix"        % "3.3.0"
+  "org.scalatest"     %% "scalatest"    % scalaTestVersion
+  
 )
