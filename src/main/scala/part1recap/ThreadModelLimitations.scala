@@ -95,3 +95,4 @@ class BankAccount(private var amt: Int) {
   def safeDeposit(money: Int)  = this.synchronized(this.amt += money)
   def getAmount                = amt
 }
+ 
