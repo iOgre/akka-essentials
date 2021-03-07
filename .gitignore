@@ -106,3 +106,4 @@ project/plugins/project/
 .metals/
 .bsp/
 
+.bsp/sbt.json
