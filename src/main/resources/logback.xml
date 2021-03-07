@@ -1,0 +1,17 @@
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+    <variable name="ROOT_LEVEL" value="${LOGBACK_ROOT_LEVEL:-INFO}"/>
+    
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date{HH:mm:ss}] %highlight([%level]) - %msg %n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+    <root level="${ROOT_LEVEL}">
+        <appender-ref ref="ASYNC_STDOUT" />
+    </root>
+</configuration>

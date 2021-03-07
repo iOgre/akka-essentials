@@ -13,13 +13,14 @@ object Playground extends App {
   val system = ActorSystem("Playground")
 
   val playgroundActor = system.actorOf(Props[MyPlaygroundActor], "playgroundActor")
-  playgroundActor ! "I love Akka!"
-
+  playgroundActor ! "I love Akka!e"
+  system.terminate()
   // your code here
 }
 
 class MyPlaygroundActor extends Actor with ActorLogging {
   override def receive = {
-    case m => log.info(m.toString)
+    case m => 
+    log.info(m.toString())
   }
 }

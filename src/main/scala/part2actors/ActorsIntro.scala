@@ -4,6 +4,8 @@ import akka.actor.ActorSystem
 import akka.actor.Actor
 import akka.actor.Props
 import akka.actor.ActorRef
+import akka.actor.ActorLogging
+import akka.event.Logging
 
 object ActorsIntro extends App {
 
@@ -16,21 +18,32 @@ object ActorsIntro extends App {
   class WordCountActor extends Actor {
     //internal data
     var totalWords = 0
+    val log        = Logging(context.system, this)
 
     //behavior
-    def receive: PartialFunction[Any, Unit] = {
+    def receive: Receive = {
       case message: String =>
-        println(s"[word count] Received: $message")
+        log.info(s"[word count] Received: $message")
         totalWords + message.split(" ").length
-      case msg => println(s"[word count] I can't process ${msg.toString}")
+      case msg => log.info(s"[word count] I can't process ${msg.toString}")
     }
   }
 
   //part 3 - instantiate actor
-  val wordCounter: ActorRef = actorSystem.actorOf(Props[WordCountActor], "wordCounter")
+
+  val wordCounter: ActorRef        = actorSystem.actorOf(Props[WordCountActor], "wordCounter")
+  val anotherWordCounter: ActorRef = actorSystem.actorOf(Props[WordCountActor], "anotherWordCounter")
 
   //part 4 - communicate
 
   wordCounter ! "I am learning akka old way"
+  anotherWordCounter ! "I got the message"
 
+  actorSystem.terminate()
+
+  // val personActor = actorSystem.actorOf(Props(new Person("bob")))
+}
+
+class Person(name: String) extends Actor {
+  def receive: Receive = ???
 }
