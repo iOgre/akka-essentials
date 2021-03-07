@@ -5,27 +5,26 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.AbstractBehavior
 import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.scaladsl.Behaviors
-
+import com.typesafe.scalalogging.StrictLogging
 
 object ActorsIntroTyped extends App {
-    val firstCounter: ActorSystem[String] = ActorSystem(ActorCounter(), "wordCounter")
-    val secondCounter: ActorSystem[String] = ActorSystem(ActorCounter(), "anotherWordCounter")
-    firstCounter ! "heloo my dear"
-    secondCounter ! "heloo my dear again"
-    firstCounter.terminate()
-    secondCounter.terminate()
+  val firstCounter: ActorSystem[String]  = ActorSystem(ActorCounter("wordCounter"), "wordCounter")
+  val secondCounter: ActorSystem[String] = ActorSystem(ActorCounter("uff"), "wordCounter")
+  firstCounter ! "Hello my dear"
+  secondCounter ! "Hello my dear again"
+  firstCounter.terminate()
+  secondCounter.terminate()
 }
 
-class ActorCounter(ctx: ActorContext[String]) extends AbstractBehavior[String](ctx) {
+class ActorCounter(ctx: ActorContext[String], name: String) extends AbstractBehavior[String](ctx) {
 
   def onMessage(msg: String): Behavior[String] = {
-   // ctx.log.info(s"[typed actor][${ctx.system.name}] Input: $msg")
-    ctx.log.info(s"$msg")
+    ctx.log.info(s"[typed actor ~$name][${ctx.system.name}] Input: $msg")
     val length = msg.split(" ").length
-    this
+    Behaviors.same
   }
 }
 
 object ActorCounter {
-    def apply():Behavior[String] = Behaviors.setup(ct => new ActorCounter(ct))
+  def apply(name: String): Behavior[String] = Behaviors.setup(ct => new ActorCounter(ct, name))
 }

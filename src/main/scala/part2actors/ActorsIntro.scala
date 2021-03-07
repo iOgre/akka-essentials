@@ -5,20 +5,20 @@ import akka.actor.Actor
 import akka.actor.Props
 import akka.actor.ActorRef
 import akka.actor.ActorLogging
-import akka.event.Logging
+import com.typesafe.scalalogging.StrictLogging
 
-object ActorsIntro extends App {
+object ActorsIntro extends App with StrictLogging {
 
   //part 1 - actor system
   val actorSystem = ActorSystem("firstActorSystem")
-  println(actorSystem.name)
+  
+  logger.info(actorSystem.name)
 
   //part 2 - create actors
 
-  class WordCountActor extends Actor {
+  class WordCountActor extends Actor with ActorLogging {
     //internal data
     var totalWords = 0
-    val log        = Logging(context.system, this)
 
     //behavior
     def receive: Receive = {
@@ -38,12 +38,21 @@ object ActorsIntro extends App {
 
   wordCounter ! "I am learning akka old way"
   anotherWordCounter ! "I got the message"
-
+  //  val personActor = actorSystem.actorOf(Props(new Person("Bob"))) // <-- discouraged, use companion object approach
+  val personActor = actorSystem.actorOf(Person.props("Bobby")) // <-- discouraged, use companion object approach
+  personActor ! "hi"
   actorSystem.terminate()
 
-  // val personActor = actorSystem.actorOf(Props(new Person("bob")))
 }
 
-class Person(name: String) extends Actor {
-  def receive: Receive = ???
+class Person(name: String) extends Actor with ActorLogging {
+
+  def receive: Receive = {
+    case "hi" => log.info(s"[person] hi, I am $name")
+    case _    =>
+  }
+}
+
+object Person {
+  def props(name: String) = Props(new Person(name))
 }
