@@ -9,14 +9,16 @@ import akka.actor.Props
 
 object ActorCapabilities extends App with StrictLogging {
   val system       = ActorSystem("actorCapabilitiesDemo")
-  val simpleActior = system.actorOf(Props[SimpleActor])
+  val simpleActior = system.actorOf(Props[SimpleActor], "simpleActor")
+  logger.info("Actor capabilities")
   simpleActior ! "good day"
+  system.terminate()
 }
 
 class SimpleActor extends Actor with ActorLogging {
 
   def receive: Receive = {
-    case msg: String => log.info(s"[simple actor] I have received: $msg")
+    case msg: String => log.info(s"I have received: $msg")
     case _           =>
   }
 }
