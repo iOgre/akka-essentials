@@ -35,23 +35,48 @@ object ActorReply extends App {
   val alice = system.actorOf(Props[SimpleActor], "alice")
   val bob   = system.actorOf(Props[SimpleActor], "bob")
 
-  alice ! SayTo(bob, "good day!")
+  
+  alice ! SayHiTo(bob, "Hi!")
+
+  //4 dead letters (sender)
+  alice ! "Hi!"
   system.terminate()
 
 }
+
+//3.a - cycle!
+object ActorInfiniteReply extends App {
+  val system = ActorSystem("ReplyDemo")
+
+  val alice = system.actorOf(Props[SimpleActor], "alice")
+  val bob   = system.actorOf(Props[SimpleActor], "bob")
+
+  alice ! TalkTo(bob, "good day!")
+ 
+}
+
+//5 forward message
+//d -> a -> b
+
 
 class SimpleActor extends Actor with ActorLogging {
 
   //context.self equivalent this in OOP
 
   def receive: Receive = {
+    case "Hi!" => 
+    log.warning(s"Hi received from ${context.sender().path}")
+    context.sender() ! "Hello there"
     case msg: String        => log.info(s"${context.self.path} I have received: $msg")
     case n: Int             => log.info(s"Received NUMBER $n, n*n=${n * n}")
     case sp: SpecialMessage => log.info(s"Received special message: $sp")
     case SelfMessage(ct)    => self ! ct
-    case SayTo(ref, msg)       => 
+    case SayHiTo(ref, msg)       => 
     log.warning(s"I am going to say ${msg} to ${ref.path}:")
     ref ! msg
+    case TalkTo(ref, msg) =>
+    log.warning(s"I am going to talk to ${ref.path} about ${msg} :")
+    ref ! TalkTo(self, s"You told me that ${msg}")
     case _                  =>
   }
 }
@@ -59,5 +84,7 @@ class SimpleActor extends Actor with ActorLogging {
 object SimpleActor {
   case class SpecialMessage(contents: String)
   case class SelfMessage(ctx: String)
-  case class SayTo(ref: ActorRef, message:String)
+  case class SayHiTo(ref: ActorRef, message:String)
+  case class TalkTo(ref:ActorRef, message:String)
+  case class WirelessPhone(content:String, )
 }
